@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FG Planner">
+<meta name="theme-color" content="#0c1220">
+<title>Flyguys Field Planner</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0c1220;--surf:#182030;--surf2:#1e2d42;--surf3:#243550;
+  --accent:#38bdf8;--text:#f0f6ff;--muted:#7a9bb5;
+  --ok:#22c55e;--warn:#f59e0b;--danger:#ef4444;--r:11px;
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);
+  display:flex;flex-direction:column;
+  max-width:520px;margin:0 auto;height:100%;
+}
+
+/* HEADER */
+#hdr{
+  background:var(--surf);
+  display:flex;align-items:center;gap:8px;
+  padding:12px 14px;
+  padding-top:max(14px,env(safe-area-inset-top));
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  flex-shrink:0;min-height:54px;
+}
+#back-btn{
+  background:none;border:none;color:var(--accent);
+  font-size:26px;cursor:pointer;display:none;
+  line-height:1;padding:0 6px 0 0;
+}
+#hdr-title{
+  flex:1;font-size:17px;font-weight:700;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#add-btn{
+  background:var(--accent);color:#0c1220;border:none;
+  border-radius:18px;padding:6px 13px;font-size:14px;
+  font-weight:700;cursor:pointer;flex-shrink:0;
+}
+#add-btn:active{opacity:.8}
+
+/* MAIN */
+#main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px}
+
+/* BOTTOM NAV */
+#nav{
+  display:flex;background:var(--surf);flex-shrink:0;
+  border-top:1px solid rgba(255,255,255,0.05);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nb{
+  flex:1;background:none;border:none;color:var(--muted);
+  padding:9px 4px 7px;font-size:10px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  transition:color .15s;font-family:inherit;
+}
+.nb.on{color:var(--accent)}
+.nbi{font-size:19px;line-height:1}
+
+/* CARDS */
+.card{
+  background:var(--surf);border-radius:var(--r);padding:14px;
+  margin-bottom:9px;cursor:pointer;
+  border:1px solid rgba(255,255,255,0.04);
+  transition:border-color .15s;
+}
+.card:active{border-color:var(--accent)}
+.cr{display:flex;align-items:center;justify-content:space-between}
+.ct{font-size:15px;font-weight:600}
+.cs{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* BADGES */
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em}
+.b-scheduled{background:rgba(56,189,248,.12);color:var(--accent)}
+.b-active{background:rgba(245,158,11,.12);color:var(--warn)}
+.b-complete{background:rgba(34,197,94,.12);color:var(--ok)}
+.b-hold{background:rgba(239,68,68,.12);color:var(--danger)}
+
+/* FIELDS */
+.fl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+input,textarea,select{
+  width:100%;background:var(--surf2);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:8px;padding:10px 12px;
+  color:var(--text);font-size:15px;font-family:inherit;
+  outline:none;-webkit-appearance:none;appearance:none;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+select option{background:#1e2d42}
+textarea{resize:vertical;min-height:66px}
+.fg{margin-bottom:13px}
+
+/* BUTTONS */
+.btn{
+  border:none;border-radius:8px;padding:11px 16px;
+  font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;
+  transition:opacity .15s;
+}
+.btn:active{opacity:.75}
+.bp{background:var(--accent);color:#0c1220}
+.bd{background:rgba(239,68,68,.12);color:var(--danger)}
+.bg{background:var(--surf2);color:var(--text)}
+.br{display:flex;gap:8px}
+
+/* CHECKLIST */
+.cli{
+  display:flex;align-items:center;gap:12px;
+  background:var(--surf);border-radius:9px;padding:12px;margin-bottom:8px;
+}
+.clc{
+  width:23px;height:23px;border-radius:50%;
+  border:2px solid var(--muted);flex-shrink:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.clc.ck{background:var(--ok);border-color:var(--ok)}
+.clc.ck::after{content:'✓';color:#fff;font-size:13px;font-weight:800}
+.clt{flex:1;font-size:14px}
+.clt.done{text-decoration:line-through;color:var(--muted)}
+.cld{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:2px 4px;line-height:1}
+.cld:active{color:var(--danger)}
+.drag-handle{display:flex;flex-direction:column;justify-content:center;gap:4px;padding:0 10px 0 2px;cursor:grab;touch-action:none;user-select:none;flex-shrink:0;height:40px}
+.drag-handle span{display:block;width:18px;height:2px;background:var(--muted);border-radius:2px}
+.cli.dragging{opacity:.2}
+
+/* PROGRESS BAR */
+.prog-wrap{height:4px;background:var(--surf2);border-radius:2px;margin-bottom:14px;overflow:hidden}
+.prog-bar{height:100%;background:var(--ok);border-radius:2px;transition:width .3s}
+
+/* SECTION HEADER */
+.sh{
+  font-size:11px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.08em;padding:10px 0 7px;
+}
+
+/* SUB TABS */
+.stabs{
+  display:flex;background:var(--surf2);border-radius:9px;padding:3px;margin-bottom:14px;
+}
+.stab{
+  flex:1;border:none;background:none;color:var(--muted);
+  padding:7px 4px;border-radius:7px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .15s;font-family:inherit;
+}
+.stab.on{background:var(--surf);color:var(--text)}
+
+/* GCP */
+.gcpc{background:var(--surf);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.epsg{font-size:24px;font-weight:900;color:var(--accent);margin-bottom:3px;letter-spacing:-.5px}
+.sysname{font-size:14px;font-weight:700;margin-bottom:8px}
+.sysd{font-size:12px;color:var(--muted);line-height:1.7}
+.emlid-box{
+  background:rgba(56,189,248,.07);
+  border:1px solid rgba(56,189,248,.18);
+  border-radius:8px;padding:10px 12px;margin-top:10px;
+  font-size:13px;line-height:1.6;
+}
+.emlid-box strong{color:var(--accent)}
+
+/* SITES */
+.si{
+  background:var(--surf2);border-radius:9px;padding:12px;
+  margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;
+}
+.sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.sd-pending{background:var(--muted)}
+.sd-complete{background:var(--ok)}
+.sd-hold{background:var(--danger)}
+.sn{font-size:14px;font-weight:600}
+.sa{font-size:12px;color:var(--muted);margin-top:2px}
+.ssel{width:auto!important;padding:5px 8px!important;font-size:11px!important;flex-shrink:0}
+
+/* RELOAD BTN */
+.reload-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;background:rgba(56,189,248,.06);
+  border:1px solid rgba(56,189,248,.18);
+  border-radius:9px;padding:14px;
+  color:var(--accent);font-size:14px;font-weight:700;
+  cursor:pointer;margin-bottom:12px;font-family:inherit;
+  transition:opacity .15s;
+}
+.reload-btn:active{opacity:.7}
+
+/* OVERLAY / SHEET */
+.ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);
+  z-index:200;display:flex;align-items:flex-end;
+}
+.sh-panel{
+  background:var(--surf);border-radius:20px 20px 0 0;
+  padding:20px 16px;
+  padding-bottom:max(24px,env(safe-area-inset-bottom));
+  width:100%;max-height:88vh;overflow-y:auto;
+}
+.sh-handle{
+  width:38px;height:4px;background:var(--surf3);
+  border-radius:2px;margin:0 auto 16px;
+}
+.sh-title{font-size:18px;font-weight:800;margin-bottom:16px}
+
+/* EMPTY */
+.empty{text-align:center;padding:64px 20px;color:var(--muted)}
+.empty-i{font-size:52px;margin-bottom:12px}
+.empty-t{font-size:15px;line-height:1.6}
+
+.div{height:1px;background:rgba(255,255,255,0.05);margin:14px 0}
+.info-box{
+  background:var(--surf2);border-radius:9px;padding:14px;
+  font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:10px;
+}
+.info-box b{color:var(--text)}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <button id="back-btn" onclick="goBack()">‹</button>
+  <div id="hdr-title">Jobs</div>
+  <button id="add-btn" onclick="handleAdd()">+ New</button>
+</div>
+
+<div id="main"></div>
+
+<div id="nav">
+  <button class="nb on" id="nb-jobs" onclick="showTab('jobs')">
+    <span class="nbi">📋</span>Jobs
+  </button>
+  <button class="nb" id="nb-check" onclick="showTab('check')">
+    <span class="nbi">✅</span>Checklist
+  </button>
+  <button class="nb" id="nb-gcp" onclick="showTab('gcp')">
+    <span class="nbi">📍</span>GCP
+  </button>
+  <button class="nb" id="nb-settings" onclick="showTab('settings')">
+    <span class="nbi">⚙️</span>Settings
+  </button>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const SK = 'fg_planner_v2';
+const DEF = {
+  jobs:[],
+  cl:{
+    pre:[
+      'Charge phone fully',
+      'Charge all drone batteries',
+      'Charge backup batteries',
+      'Pack rod + legs (survey rod)',
+      'Download site files / KML',
+      'Check weather forecast',
+      'Check airspace / NOTAMs',
+      'Confirm Flyguys job details',
+      'Pack ground control targets',
+    ],
+    post:[
+      'All batteries accounted for',
+      'Drone secured in case',
+      'Survey rod + legs packed',
+      'Raw data backed up',
+      'Files uploaded per job req',
+      'Flight time logged',
+      'Report submitted in app',
+    ]
+  }
+};
+
+let D = load();
+let tab='jobs', view='list', jobId=null, clPhase='pre';
+
+function load(){
+  try{return JSON.parse(localStorage.getItem(SK))||JSON.parse(JSON.stringify(DEF));}
+  catch{return JSON.parse(JSON.stringify(DEF));}
+}
+function save(){try{localStorage.setItem(SK,JSON.stringify(D));}catch(e){}}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmtDate(d){
+  if(!d)return'';
+  const[y,m,dy]=d.split('-');
+  return new Date(y,m-1,dy).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+// ── RENDER ────────────────────────────────────────────
+function render(){
+  const m=document.getElementById('main');
+  if(view==='job'&&jobId){renderJob(m);return;}
+  if(tab==='jobs')renderJobs(m);
+  else if(tab==='check')renderCheck(m);
+  else if(tab==='gcp')renderGCP(m);
+  else renderSettings(m);
+}
+
+// ── JOBS LIST ─────────────────────────────────────────
+function renderJobs(m){
+  hdr('Jobs',false,true);
+  if(!D.jobs.length){
+    m.innerHTML=`<div class="empty"><div class="empty-i">🚁</div><div class="empty-t">No jobs yet.<br>Tap <b>+ New</b> to add your first job.</div></div>`;
+    return;
+  }
+  const sorted=[...D.jobs].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  m.innerHTML=sorted.map(j=>{
+    const sc=j.sites?.length||0;
+    const done=j.sites?.filter(s=>s.status==='complete').length||0;
+    const pre=D.cl.pre.length;
+    const preDone=D.cl.pre.filter((_,i)=>j.checks?.pre?.[i]).length;
+    return`<div class="card" onclick="openJob('${j.id}')">
+      <div class="cr">
+        <div class="ct">${esc(j.name)}</div>
+        <span class="badge b-${j.status||'scheduled'}">${j.status||'scheduled'}</span>
+      </div>
+      <div class="cs">
+        ${j.date?fmtDate(j.date):'No date'}${j.jobId?' · '+esc(j.jobId):''}
+        ${sc?` · ${done}/${sc} sites`:''}
+        ${pre?` · pre ${preDone}/${pre}`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openJob(id){jobId=id;view='job';render()}
+
+// ── JOB DETAIL ────────────────────────────────────────
+function renderJob(m){
+  const j=D.jobs.find(x=>x.id===jobId);
+  if(!j){goBack();return;}
+  hdr(j.name,true,false);
+  const sites=j.sites||[];
+  const checks=j.checks||{pre:{},post:{}};
+  const preT=D.cl.pre.length, preD=D.cl.pre.filter((_,i)=>checks.pre?.[i]).length;
+  const postT=D.cl.post.length, postD=D.cl.post.filter((_,i)=>checks.post?.[i]).length;
+
+  m.innerHTML=`
+  <div class="fg"><div class="fl">Job Name</div>
+    <input type="text" value="${esc(j.name)}" onchange="upJob('name',this.value)"></div>
+  <div class="fg"><div class="fl">Status</div>
+    <select onchange="upJob('status',this.value)">
+      <option value="scheduled" ${j.status==='scheduled'||!j.status?'selected':''}>Scheduled</option>
+      <option value="active" ${j.status==='active'?'selected':''}>Active / In Progress</option>
+      <option value="complete" ${j.status==='complete'?'selected':''}>Complete</option>
+      <option value="hold" ${j.status==='hold'?'selected':''}>On Hold</option>
+    </select></div>
+  <div style="display:flex;gap:10px">
+    <div class="fg" style="flex:1"><div class="fl">Date</div>
+      <input type="date" value="${j.date||''}" onchange="upJob('date',this.value)"></div>
+    <div class="fg" style="flex:1"><div class="fl">FG Job ID</div>
+      <input type="text" placeholder="FG-XXXXX" value="${esc(j.jobId||'')}" onchange="upJob('jobId',this.value)"></div>
+  </div>
+  <div class="fg"><div class="fl">Notes</div>
+    <textarea placeholder="Weather holds, contacts, access codes, roof conditions..." onchange="upJob('notes',this.value)">${esc(j.notes||'')}</textarea></div>
+  <div class="div"></div>
+
+  <div class="sh">Flight Sites (${sites.length})</div>
+  ${sites.map((s,i)=>`
+    <div class="si">
+      <div class="sdot sd-${s.status||'pending'}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="sn">${esc(s.name||'Site '+(i+1))}</div>
+        ${s.address?`<div class="sa">${esc(s.address)}</div>`:''}
+        ${s.notes?`<div class="sa" style="margin-top:3px">${esc(s.notes)}</div>`:''}
+      </div>
+      <select class="ssel" onchange="upSite(${i},'status',this.value)">
+        <option value="pending" ${(s.status||'pending')==='pending'?'selected':''}>⬜ Pending</option>
+        <option value="complete" ${s.status==='complete'?'selected':''}>✅ Done</option>
+        <option value="hold" ${s.status==='hold'?'selected':''}>🚫 Hold</option>
+      </select>
+      <button class="cld" onclick="delSite(${i})">×</button>
+    </div>`).join('')}
+  <button class="btn bg" style="width:100%;margin-bottom:4px" onclick="addSiteSheet()">+ Add Site</button>
+  <div class="div"></div>
+
+  <div class="sh">Checklists</div>
+  <div class="stabs">
+    <button class="stab ${clPhase==='pre'?'on':''}" onclick="setCLP('pre')">Pre-Flight (${preD}/${preT})</button>
+    <button class="stab ${clPhase==='post'?'on':''}" onclick="setCLP('post')">Post-Flight (${postD}/${postT})</button>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:${clPhase==='pre'?(preT?Math.round(preD/preT*100):0):(postT?Math.round(postD/postT*100):0)}%"></div></div>
+  <div id="cl-list">${renderClItems()}</div>
+  <div class="div"></div>
+  <div class="br">
+    <button class="btn bd" style="flex:1" onclick="delJob()">Delete Job</button>
+  </div>
+  <div style="height:24px"></div>`;
+}
+
+function renderClItems(){
+  const j=D.jobs.find(x=>x.id===jobId);
+  if(!j)return'';
+  const items=D.cl[clPhase];
+  const checks=j.checks||{pre:{},post:{}};
+  // pair each item with its original index, sort unchecked first
+  const pairs=items.map((item,i)=>({item,i,ck:!!(checks[clPhase]?.[i])}));
+  pairs.sort((a,b)=>a.ck-b.ck);
+  return pairs.map(({item,i,ck})=>`
+    <div class="cli" style="${ck?'opacity:.5':''}">
+      <div class="clc ${ck?'ck':''}" onclick="togCl(${i})"></div>
+      <div class="clt ${ck?'done':''}">${esc(item)}</div>
+    </div>`).join('');
+}
+
+function togCl(i){
+  const j=D.jobs.find(x=>x.id===jobId);if(!j)return;
+  j.checks=j.checks||{pre:{},post:{}};
+  j.checks[clPhase]=j.checks[clPhase]||{};
+  j.checks[clPhase][i]=!j.checks[clPhase][i];
+  save();
+  // partial re-render
+  document.getElementById('cl-list').innerHTML=renderClItems();
+  const items=D.cl[clPhase],checks=j.checks;
+  const tot=items.length,done=items.filter((_,k)=>checks[clPhase]?.[k]).length;
+  const prog=document.getElementById('prog');
+  if(prog)prog.style.width=(tot?Math.round(done/tot*100):0)+'%';
+  const tabs=document.querySelectorAll('.stab');
+  if(tabs[clPhase==='pre'?0:1])tabs[clPhase==='pre'?0:1].textContent=`${clPhase==='pre'?'Pre':'Post'}-Flight (${done}/${tot})`;
+}
+
+function setCLP(p){
+  clPhase=p;
+  const cl=document.getElementById('cl-list');
+  if(cl){
+    cl.innerHTML=renderClItems();
+    document.querySelectorAll('.stab').forEach((t,i)=>t.classList.toggle('on',(i===0&&p==='pre')||(i===1&&p==='post')));
+    const j=D.jobs.find(x=>x.id===jobId);
+    if(j){
+      const items=D.cl[p],checks=j.checks||{};
+      const tot=items.length,done=items.filter((_,k)=>checks[p]?.[k]).length;
+      const prog=document.getElementById('prog');
+      if(prog)prog.style.width=(tot?Math.round(done/tot*100):0)+'%';
+    }
+  }
+}
+
+function upJob(field,val){const j=D.jobs.find(x=>x.id===jobId);if(j){j[field]=val;save();}}
+function upSite(i,field,val){
+  const j=D.jobs.find(x=>x.id===jobId);
+  if(j?.sites?.[i]){j.sites[i][field]=val;save();}
+}
+function delSite(i){
+  confirm2('Remove this site?',()=>{
+    const j=D.jobs.find(x=>x.id===jobId);
+    if(j){j.sites.splice(i,1);save();// ── DRAG TO REORDER ───────────────────────────────────
+let _drag=null;
+function startDrag(e,idx){
+  e.preventDefault();
+  const handle=e.currentTarget;
+  const el=handle.closest('.cli');
+  const rect=el.getBoundingClientRect();
+  const clone=el.cloneNode(true);
+  clone.style.cssText=`position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;z-index:999;pointer-events:none;background:var(--surf3);border-radius:9px;box-shadow:0 8px 32px rgba(0,0,0,.6);`;
+  document.body.appendChild(clone);
+  el.classList.add('dragging');
+  _drag={idx,el,clone,offsetY:e.clientY-rect.top,insertAt:idx};
+  handle.setPointerCapture(e.pointerId);
+  handle.addEventListener('pointermove',onDragMove);
+  handle.addEventListener('pointerup',onDragEnd,{once:true});
+  handle.addEventListener('pointercancel',onDragEnd,{once:true});
+}
+function onDragMove(e){
+  if(!_drag)return;
+  _drag.clone.style.top=(e.clientY-_drag.offsetY)+'px';
+  const items=[...document.querySelectorAll('#tmpl-list .cli')];
+  let ins=0;
+  items.forEach((el,i)=>{
+    if(el===_drag.el)return;
+    const r=el.getBoundingClientRect();
+    if(e.clientY>r.top+r.height/2)ins=i+1;
+  });
+  _drag.insertAt=ins;
+  items.forEach((el,i)=>{
+    el.style.borderTop=(i===ins&&el!==_drag.el)?'2px solid var(--accent)':'';
+  });
+}
+function onDragEnd(e){
+  if(!_drag)return;
+  const{idx,el,clone,insertAt}=_drag;
+  clone.remove();
+  el.classList.remove('dragging');
+  document.querySelectorAll('#tmpl-list .cli').forEach(el=>el.style.borderTop='');
+  e.currentTarget.removeEventListener('pointermove',onDragMove);
+  _drag=null;
+  if(insertAt!==idx){
+    const arr=[...D.cl[clPhase]];
+    const[item]=arr.splice(idx,1);
+    arr.splice(insertAt>idx?insertAt-1:insertAt,0,item);
+    D.cl[clPhase]=arr;
+    save();render();
+  }
+}
+
+render();}
+  });
+}
+function delJob(){
+  confirm2('Delete this job? Cannot be undone.',()=>{
+    D.jobs=D.jobs.filter(j=>j.id!==jobId);
+    save();goBack();
+  });
+}
+
+// ── CHECKLIST TAB ─────────────────────────────────────
+function renderCheck(m){
+  hdr('Checklists',false,false);
+  m.innerHTML=`
+  <div class="stabs">
+    <button class="stab ${clPhase==='pre'?'on':''}" onclick="setClTab('pre')">Pre-Flight</button>
+    <button class="stab ${clPhase==='post'?'on':''}" onclick="setClTab('post')">Post-Flight</button>
+  </div>
+  <div class="info-box">Edit your checklist templates here. These items appear on every job.</div>
+  <div id="tmpl-list">${renderTemplate()}</div>
+  <button class="btn bg" style="width:100%;margin-top:4px" onclick="addTmplItem()">+ Add Item</button>
+  <div style="height:20px"></div>`;
+}
+function renderTemplate(){
+  return D.cl[clPhase].map((item,i)=>`
+  <div class="cli">
+    <div class="clc ck" style="background:var(--surf3);border-color:var(--surf3)"></div>
+    <div class="clt">${esc(item)}</div>
+    <button class="cld" onclick="delTmpl(${i})">×</button>
+  </div>`).join('');
+}
+function setClTab(p){clPhase=p;render();}
+function addTmplItem(){
+  prompt2(`New ${clPhase==='pre'?'pre':'post'}-flight item:`,'e.g. Check props for damage',v=>{
+    if(!v?.trim())return;
+    D.cl[clPhase].push(v.trim());save();render();
+  });
+}
+function delTmpl(i){
+  confirm2(`Remove "${D.cl[clPhase][i]}"?`,()=>{
+    D.cl[clPhase].splice(i,1);save();render();
+  });
+}
+
+// ── GCP TAB ───────────────────────────────────────────
+const GCP={
+  NH:{label:'New Hampshire',sys:[{
+    epsg:'EPSG:32110',name:'NAD83 / New Hampshire',units:'US Survey Feet (ftUS)',
+    emlid:'In Emlid Flow → Settings → Coordinate System → search "New Hampshire" → select NAD83 / New Hampshire (ftUS)',
+    note:'Covers all of NH. Most survey work here uses feet — confirm with client if meters needed.'
+  }]},
+  MA:{label:'Massachusetts',sys:[
+    {epsg:'EPSG:26986',name:'NAD83 / Massachusetts Mainland',units:'Meters',
+    emlid:'Search "Massachusetts Mainland" → select NAD83 / Massachusetts Mainland (m)',
+    note:'Mainland MA sites — Springfield, Longmeadow, Boston, Worcester. Enfield CT jobs that specify MA system.'},
+    {epsg:'EPSG:26987',name:'NAD83 / Massachusetts Island',units:'Meters',
+    emlid:'Search "Massachusetts Island" in Emlid Flow',
+    note:'Cape Cod, Nantucket, Martha\'s Vineyard only.'}
+  ]},
+  CT:{label:'Connecticut',sys:[{
+    epsg:'EPSG:32118',name:'NAD83 / Connecticut',units:'US Survey Feet (ftUS)',
+    emlid:'Search "Connecticut" → select NAD83 / Connecticut (ftUS)',
+    note:'Statewide — Enfield, Willimantic, Hartford. Single zone covers all of CT.'
+  }]},
+  RI:{label:'Rhode Island',sys:[{
+    epsg:'EPSG:32130',name:'NAD83 / Rhode Island',units:'US Survey Feet (ftUS)',
+    emlid:'Search "Rhode Island" → select NAD83 / Rhode Island (ftUS)',
+    note:'Single zone statewide.'
+  }]},
+  VT:{label:'Vermont',sys:[{
+    epsg:'EPSG:32145',name:'NAD83 / Vermont',units:'US Survey Feet (ftUS)',
+    emlid:'Search "Vermont" → select NAD83 / Vermont (ftUS)',
+    note:'Single zone statewide.'
+  }]},
+  ME:{label:'Maine',sys:[
+    {epsg:'EPSG:32120',name:'NAD83 / Maine East',units:'Meters',
+    emlid:'Search "Maine East" → select NAD83 / Maine East (m)',
+    note:'Eastern ME: Portland, Bangor, coastal areas. Dividing line ~68°50\'W.'},
+    {epsg:'EPSG:32121',name:'NAD83 / Maine West',units:'Meters',
+    emlid:'Search "Maine West" → select NAD83 / Maine West (m)',
+    note:'Western ME: Lewiston, Auburn, Farmington, western lakes region.'}
+  ]},
+  UTM:{label:'UTM Zone 19N (Universal)',sys:[{
+    epsg:'EPSG:32619',name:'WGS84 / UTM Zone 19N',units:'Meters',
+    emlid:'Search "UTM 19N" or type "32619" in Emlid Flow coordinate system search',
+    note:'Covers all of New England. Best cross-state fallback. Use if client doesn\'t specify state plane or job spans multiple states.'
+  }]}
+};
+
+let gcpState=localStorage.getItem('fg_gcp')||'NH';
+
+function renderGCP(m){
+  hdr('GCP Coords',false,false);
+  const sd=GCP[gcpState];
+  m.innerHTML=`
+  <div class="fg"><div class="fl">State / Region</div>
+    <select onchange="setGCP(this.value)">
+      ${Object.entries(GCP).map(([k,v])=>`<option value="${k}" ${k===gcpState?'selected':''}>${v.label}</option>`).join('')}
+    </select>
+  </div>
+  ${sd.sys.map(s=>`
+  <div class="gcpc">
+    <div class="epsg">${s.epsg}</div>
+    <div class="sysname">${s.name}</div>
+    <div class="sysd">Units: <b style="color:var(--text)">${s.units}</b><br>${s.note}</div>
+    <div class="emlid-box"><strong>Emlid Flow:</strong><br>${esc(s.emlid)}</div>
+  </div>`).join('')}
+  <div class="div"></div>
+  <div class="gcpc">
+    <div style="font-size:13px;font-weight:700;margin-bottom:8px">📐 Vertical / Ellipsoidal Height</div>
+    <div class="sysd">
+      Flyguys uses <b style="color:var(--text)">GEOID12B</b> (<code style="font-size:11px;color:var(--accent)">us_noaa_g2012bu0.tif</code>) to convert GPS ellipsoidal height to NAVD88 orthometric elevation.<br><br>
+      <b style="color:var(--text)">In Emlid Flow:</b>
+    </div>
+    <div class="emlid-box" style="margin-top:8px">
+      <strong>Vertical datum:</strong> NAVD88<br>
+      <strong>Geoid model:</strong> GEOID12B (auto-selected for CONUS states)<br>
+      <strong>Height output:</strong> Orthometric (m or ftUS — match your horizontal units)<br><br>
+      <strong>⚠️ Do not use ellipsoidal height in the export</strong> — photogrammetry software expects NAVD88 unless job specifically calls for HAE.
+    </div>
+  </div>
+  <div class="div"></div>
+  <div class="gcpc">
+    <div style="font-size:13px;font-weight:700;margin-bottom:8px">📋 GCP Workflow</div>
+    <div class="sysd">
+      1. Set coordinate system (above) in Emlid Flow before collecting<br>
+      2. Stake / lay flat targets before flight<br>
+      3. Collect each GCP — average 3–5 min per point<br>
+      4. Export CSV from Emlid → import to photogrammetry software<br>
+      5. Match point IDs to visible targets in imagery
+    </div>
+  </div>
+  <div style="height:20px"></div>`;
+}
+function setGCP(s){gcpState=s;localStorage.setItem('fg_gcp',s);renderGCP(document.getElementById('main'))}
+
+// ── SETTINGS TAB ──────────────────────────────────────
+function renderSettings(m){
+  hdr('Settings',false,false);
+  m.innerHTML=`
+  <div class="info-box" style="margin-bottom:14px">
+    <b>Flyguys Field Planner v1.0</b><br>
+    <span style="font-size:12px">Host on GitHub Pages, Netlify, or Cloudflare Pages. See deployment notes at the bottom of index.html.</span>
+  </div>
+  <button class="reload-btn" onclick="forceReload()">🔄 Reload from Web</button>
+  <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:16px">Clears service worker cache and force-reloads. Use after pushing updates to your repo.</div>
+  <div class="div"></div>
+  <div class="fg"><div class="fl">Backup</div>
+    <button class="btn bg" style="width:100%" onclick="exportData()">📤 Export JSON Backup</button>
+  </div>
+  <div class="fg"><div class="fl">Danger Zone</div>
+    <button class="btn bd" style="width:100%" onclick="clearAll()">🗑 Clear All Data</button>
+  </div>
+  <div class="div"></div>
+  <div class="gcpc">
+    <div style="font-size:13px;font-weight:700;margin-bottom:8px">📱 Install as App</div>
+    <div class="sysd">
+      <b style="color:var(--text)">iPhone (Safari):</b><br>Tap Share → Add to Home Screen<br><br>
+      <b style="color:var(--text)">Android (Chrome):</b><br>Tap ⋮ → Add to Home Screen
+    </div>
+  </div>
+  <div style="height:20px"></div>`;
+}
+
+// ── ACTIONS ───────────────────────────────────────────
+function handleAdd(){
+  if(view==='job'){addSiteSheet();return;}
+  if(tab==='jobs')addJobSheet();
+  else if(tab==='check')addTmplItem();
+}
+
+function addJobSheet(){
+  const today=new Date().toISOString().split('T')[0];
+  sheet(`
+  <div class="sh-handle"></div>
+  <div class="sh-title">New Job</div>
+  <div class="fg"><div class="fl">Job Name</div>
+    <input type="text" id="nj-name" placeholder="e.g. Flyguys – Springfield MA"></div>
+  <div style="display:flex;gap:10px">
+    <div class="fg" style="flex:1"><div class="fl">Date</div>
+      <input type="date" id="nj-date" value="${today}"></div>
+    <div class="fg" style="flex:1"><div class="fl">FG Job ID</div>
+      <input type="text" id="nj-jid" placeholder="FG-XXXXX"></div>
+  </div>
+  <div class="br">
+    <button class="btn bg" style="flex:1" onclick="closeSheet()">Cancel</button>
+    <button class="btn bp" style="flex:1" onclick="createJob()">Create</button>
+  </div>`);
+  setTimeout(()=>document.getElementById('nj-name')?.focus(),120);
+}
+function createJob(){
+  const n=document.getElementById('nj-name').value.trim();
+  if(!n){alert('Enter a job name.');return;}
+  const j={id:uid(),name:n,date:document.getElementById('nj-date').value,
+    jobId:document.getElementById('nj-jid').value.trim(),
+    status:'scheduled',notes:'',sites:[],checks:{pre:{},post:{}}};
+  D.jobs.push(j);save();closeSheet();openJob(j.id);
+}
+
+function addSiteSheet(){
+  sheet(`
+  <div class="sh-handle"></div>
+  <div class="sh-title">Add Flight Site</div>
+  <div class="fg"><div class="fl">Site Name</div>
+    <input type="text" id="ns-name" placeholder="e.g. 123 Main St – Rooftop"></div>
+  <div class="fg"><div class="fl">Address</div>
+    <input type="text" id="ns-addr" placeholder="Street address or description"></div>
+  <div class="fg"><div class="fl">Notes</div>
+    <textarea id="ns-notes" placeholder="Snow on roof, access code, restricted airspace, tree line..."></textarea></div>
+  <div class="br">
+    <button class="btn bg" style="flex:1" onclick="closeSheet()">Cancel</button>
+    <button class="btn bp" style="flex:1" onclick="createSite()">Add Site</button>
+  </div>`);
+  setTimeout(()=>document.getElementById('ns-name')?.focus(),120);
+}
+function createSite(){
+  const n=document.getElementById('ns-name').value.trim();
+  if(!n){alert('Enter a site name.');return;}
+  const j=D.jobs.find(x=>x.id===jobId);if(!j)return;
+  j.sites=j.sites||[];
+  j.sites.push({name:n,address:document.getElementById('ns-addr').value.trim(),
+    notes:document.getElementById('ns-notes').value.trim(),status:'pending'});
+  save();closeSheet();render();
+}
+
+// ── NAV ───────────────────────────────────────────────
+function showTab(t){
+  tab=t;view='list';jobId=null;
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('nb-'+t)?.classList.add('on');
+  render();
+}
+function goBack(){view='list';jobId=null;render();}
+function hdr(title,showBack,showAdd){
+  document.getElementById('hdr-title').textContent=title;
+  document.getElementById('back-btn').style.display=showBack?'':'none';
+  document.getElementById('add-btn').style.display=showAdd?'':'none';
+}
+
+// ── SHEET ─────────────────────────────────────────────
+function sheet(html){
+  const ov=document.createElement('div');
+  ov.className='ov';ov.id='ov';
+  ov.innerHTML=`<div class="sh-panel">${html}</div>`;
+  ov.addEventListener('click',e=>{if(e.target===ov)closeSheet();});
+  document.body.appendChild(ov);
+}
+function closeSheet(){document.getElementById('ov')?.remove();}
+
+let _cb=null;
+function confirm2(msg,onYes){
+  _cb=onYes;
+  sheet(`<div class="sh-handle"></div>
+  <div class="sh-title" style="font-size:16px">${esc(msg)}</div>
+  <div class="br" style="margin-top:8px">
+    <button class="btn bg" style="flex:1" onclick="closeSheet()">Cancel</button>
+    <button class="btn bd" style="flex:1" onclick="closeSheet();_cb&&_cb()">Delete</button>
+  </div>`);
+}
+function prompt2(msg,placeholder,onOk){
+  _cb=onOk;
+  sheet(`<div class="sh-handle"></div>
+  <div class="sh-title" style="font-size:16px">${esc(msg)}</div>
+  <div class="fg"><input type="text" id="p2-val" placeholder="${esc(placeholder)}"></div>
+  <div class="br">
+    <button class="btn bg" style="flex:1" onclick="closeSheet()">Cancel</button>
+    <button class="btn bp" style="flex:1" onclick="_cb&&_cb(document.getElementById('p2-val').value);closeSheet()">Add</button>
+  </div>`);
+  setTimeout(()=>document.getElementById('p2-val')?.focus(),120);
+}
+
+// ── UTILS ─────────────────────────────────────────────
+function forceReload(){
+  if('serviceWorker'in navigator)
+    navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));
+  if('caches'in window)
+    caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));
+  setTimeout(()=>location.reload(true),350);
+}
+function exportData(){
+  const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(b);
+  const a=document.createElement('a');a.href=u;a.download='fg-planner-backup.json';a.click();
+  URL.revokeObjectURL(u);
+}
+function clearAll(){
+  confirm2('Clear ALL jobs and data? Cannot be undone.',()=>{
+    D=JSON.parse(JSON.stringify(DEF));save();
+    view='list';jobId=null;render();
+  });
+}
+
+// ── SERVICE WORKER ────────────────────────────────────
+// For full offline support, create sw.js at your hosting root (see bottom of file)
+// and add to <head>: <link rel="manifest" href="/manifest.json">
+if('serviceWorker'in navigator){
+  // Will work once sw.js exists at root of your hosted domain
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+
+render();
+</script>
+
+<!-- =====================================================
+HOSTING / PWA SETUP — read before deploying
+=======================================================
+
+1. Save this file as: index.html
+
+2. Create manifest.json (same folder):
+{
+  "name": "Flyguys Field Planner",
+  "short_name": "FG Planner",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c1220",
+  "theme_color": "#0c1220",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
+
+3. Add inside <head> of this file:
+<link rel="manifest" href="/manifest.json">
+
+4. Create sw.js (same folder):
+---
+const CACHE = 'fg-v1';
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/', '/index.html'])));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(ks => Promise.all(
+    ks.filter(k => k !== CACHE).map(k => caches.delete(k))
+  )));
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+});
+---
+
+5. When you push updates, bump CACHE to 'fg-v2', 'fg-v3', etc.
+   Then tap "Reload from Web" on the phone to pull the latest.
+
+6. Host on: GitHub Pages, Netlify, Cloudflare Pages (all free)
+
+7. iOS "Add to Home Screen": open in Safari → Share → Add to Home Screen
+   Android: Chrome ⋮ → Add to Home Screen
+======================================================= -->
+</body>
+</html>
