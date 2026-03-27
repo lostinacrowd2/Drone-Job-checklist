@@ -1,32 +1,30 @@
-// Update the cache version and add manifest.json to the cache list
-const cacheName = 'fg-v2';
-const filesToCache = [
-  'index.html',
-  'styles.css',
-  'script.js',
-  'manifest.json' // Added manifest.json to the cache list
+const CACHE = 'fg-v3';
+const FILES_TO_CACHE = [
+  '/Drone-Job-checklist/',
+  '/Drone-Job-checklist/index.html',
+  '/Drone-Job-checklist/manifest.json',
+  '/Drone-Job-checklist/icon.svg'
 ];
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(cacheName)
-      .then(cache => {
-        return cache.addAll(filesToCache);
-      })
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(FILES_TO_CACHE))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+      )
+    )
   );
 });
 
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [cacheName];
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(r => r || fetch(e.request))
   );
 });
