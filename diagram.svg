@@ -1,0 +1,86 @@
+<svg aria-labelledby="title desc" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" height="200" width="200">
+  <title>Drone Checklist App Icon</title>
+  <desc id="desc">Stylized quadcopter drone with checklist and topographic background</desc>
+  
+  
+  <defs>
+    <pattern patternTransform="rotate(-30)" height="50" width="50" patternUnits="userSpaceOnUse" id="topo">
+      <path opacity="0.22" stroke-width="1.8" stroke="#67E8F9" fill="none" d="M0 25 Q12 15 25 25 Q38 35 50 25"></path>
+      <path opacity="0.16" stroke-width="1.4" stroke="#67E8F9" fill="none" d="M0 40 Q12 30 25 40 Q38 50 50 40"></path>
+    </pattern>
+  </defs>
+
+  
+  <rect fill="#F1F5F9" rx="44" height="200" width="200"></rect>
+  <rect fill="url(#topo)" rx="44" height="200" width="200"></rect>
+
+  
+  <rect stroke-width="7" stroke="#1E2937" fill="#FFFFFF" rx="10" height="124" width="98" y="68" x="52"></rect>
+  
+  <rect opacity="0.6" fill="#F8FAFC" rx="9" height="120" width="94" y="70" x="54"></rect>
+
+  
+  <rect fill="#94A3B8" rx="2" height="5" width="68" y="85" x="68"></rect>
+  <rect fill="#94A3B8" rx="2" height="5" width="68" y="99" x="68"></rect>
+  <rect fill="#94A3B8" rx="2" height="5" width="68" y="113" x="68"></rect>
+  <rect fill="#94A3B8" rx="2" height="5" width="68" y="127" x="68"></rect>
+
+  
+  
+  <path stroke-linejoin="round" stroke-linecap="round" stroke-width="13" stroke="#0F172A" fill="none" d="M70 167 L82 179 L115 140"></path>
+  
+  <path stroke-linejoin="round" stroke-linecap="round" stroke-width="9" stroke="#0F172A" fill="none" d="M72 125 L82 135 L105 112"></path>
+
+  
+  
+  <ellipse fill="#1E2937" ry="19" rx="26" cy="72" cx="100"></ellipse>
+  
+  <ellipse opacity="0.9" fill="#334155" ry="15" rx="23" cy="68" cx="100"></ellipse>
+  
+  
+  
+  <path stroke-linecap="round" stroke-width="13" stroke="#1E2937" fill="none" d="M74 68 Q52 48 48 48"></path>
+  
+  <path stroke-linecap="round" stroke-width="13" stroke="#1E2937" fill="none" d="M126 68 Q148 48 152 48"></path>
+  
+  <path stroke-linecap="round" stroke-width="13" stroke="#1E2937" fill="none" d="M74 76 Q52 92 48 96"></path>
+  
+  <path stroke-linecap="round" stroke-width="13" stroke="#1E2937" fill="none" d="M126 76 Q148 92 152 96"></path>
+
+  
+  
+  <g transform="translate(48 48)">
+    <circle fill="#67E8F9" r="13"></circle>
+    <ellipse transform="rotate(35)" fill="#22D3EE" ry="4" rx="13" cy="0" cx="0"></ellipse>
+    <ellipse transform="rotate(-55)" fill="#22D3EE" ry="4" rx="13" cy="0" cx="0"></ellipse>
+    <circle fill="#1E2937" r="4"></circle>
+  </g>
+
+  
+  <g transform="translate(152 48)">
+    <circle fill="#67E8F9" r="13"></circle>
+    <ellipse transform="rotate(40)" fill="#22D3EE" ry="4" rx="13" cy="0" cx="0"></ellipse>
+    <ellipse transform="rotate(-50)" fill="#22D3EE" ry="4" rx="13" cy="0" cx="0"></ellipse>
+    <circle fill="#1E2937" r="4"></circle>
+  </g>
+
+  
+  <g transform="translate(48 96)">
+    <circle fill="#67E8F9" r="13"></circle>
+    <ellipse transform="rotate(30)" fill="#22D3EE" ry="4" rx="13" cy="0" cx="0"></ellipse>
+    <ellipse transform="rotate(-60)" fill="#22D3EE" ry="4" rx="13" cy="0" cx="0"></ellipse>
+    <circle fill="#1E2937" r="4"></circle>
+  </g>
+
+  
+  <g transform="translate(152 96)">
+    <circle fill="#67E8F9" r="13"></circle>
+    <ellipse transform="rotate(45)" fill="#22D3EE" ry="4" rx="13" cy="0" cx="0"></ellipse>
+    <ellipse transform="rotate(-45)" fill="#22D3EE" ry="4" rx="13" cy="0" cx="0"></ellipse>
+    <circle fill="#1E2937" r="4"></circle>
+  </g>
+
+  
+  <rect opacity="0.75" fill="#67E8F9" rx="2" height="14" width="7" y="65" x="83"></rect>
+  <rect opacity="0.75" fill="#67E8F9" rx="2" height="14" width="7" y="65" x="110"></rect>
+</svg>
