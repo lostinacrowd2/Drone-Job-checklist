@@ -1,13 +1,32 @@
-const CACHE = 'fg-v1';
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/', '/index.html'])));
-  self.skipWaiting();
+// Update the cache version and add manifest.json to the cache list
+const cacheName = 'fg-v2';
+const filesToCache = [
+  'index.html',
+  'styles.css',
+  'script.js',
+  'manifest.json' // Added manifest.json to the cache list
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(cacheName)
+      .then(cache => {
+        return cache.addAll(filesToCache);
+      })
+  );
 });
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(
-    ks.filter(k => k !== CACHE).map(k => caches.delete(k))
-  )));
-});
-self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [cacheName];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
 });
