@@ -1,12 +1,19 @@
 {
   "name": "Drone Job Planner",
   "short_name": "DJ Planner",
-  "start_url": "/",
+  "description": "Field planning app for drone jobs",
+  "start_url": "/Drone-Job-checklist/",
+  "scope": "/Drone-Job-checklist/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#0c1220",
   "theme_color": "#0c1220",
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+    {
+      "src": "/Drone-Job-checklist/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
   ]
 }
