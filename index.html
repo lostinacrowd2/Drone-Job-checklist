@@ -4,17 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="FG Planner">
 <meta name="theme-color" content="#0c1220">
 <title>Flyguys Field Planner</title>
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/Drone-Job-checklist/manifest.json">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#0c1220;--surf:#182030;--surf2:#1e2d42;--surf3:#243550;
   --accent:#38bdf8;--text:#f0f6ff;--muted:#7a9bb5;
-  --ok:#22c55e;--warn:#f59e0b;--danger:#ef4444;--facade:#a78bfa;--r:11px;
+  --ok:#22c55e;--warn:#f59e0b;--danger:#ef4444;--facade:#a78bfa;--mile:#34d399;--r:11px;
 }
 html,body{height:100%;overflow:hidden}
 body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;max-width:520px;margin:0 auto;height:100%;}
@@ -25,9 +26,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 #add-btn:active{opacity:.8}
 #main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px}
 #nav{display:flex;background:var(--surf);flex-shrink:0;border-top:1px solid rgba(255,255,255,0.05);padding-bottom:env(safe-area-inset-bottom);}
-.nb{flex:1;background:none;border:none;color:var(--muted);padding:9px 2px 7px;font-size:9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .15s;font-family:inherit;}
+.nb{flex:1;background:none;border:none;color:var(--muted);padding:8px 1px 6px;font-size:8.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:color .15s;font-family:inherit;}
 .nb.on{color:var(--accent)}
-.nbi{font-size:19px;line-height:1}
+.nbi{font-size:17px;line-height:1}
 .card{background:var(--surf);border-radius:var(--r);padding:14px;margin-bottom:9px;cursor:pointer;border:1px solid rgba(255,255,255,0.04);transition:border-color .15s;}
 .card:active{border-color:var(--accent)}
 .cr{display:flex;align-items:center;justify-content:space-between}
@@ -49,16 +50,16 @@ textarea{resize:vertical;min-height:66px}
 .bp{background:var(--accent);color:#0c1220}
 .bd{background:rgba(239,68,68,.12);color:var(--danger)}
 .bg{background:var(--surf2);color:var(--text)}
+.bm{background:rgba(52,211,153,.12);color:var(--mile)}
 .br{display:flex;gap:8px}
-/* TOGGLE */
 .tog-row{display:flex;align-items:center;justify-content:space-between;background:var(--surf2);border-radius:9px;padding:12px 14px;margin-bottom:13px;}
 .tog-label{font-size:14px;font-weight:600}
 .tog-sub{font-size:11px;color:var(--muted);margin-top:2px}
 .tog{width:44px;height:26px;background:var(--surf3);border-radius:13px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;border:none;}
 .tog.on{background:var(--facade)}
+.tog.acc.on{background:var(--accent)}
 .tog::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s;}
 .tog.on::after{transform:translateX(18px)}
-/* CHECKLIST */
 .cli{display:flex;align-items:center;gap:12px;background:var(--surf);border-radius:9px;padding:12px;margin-bottom:8px;}
 .clc{width:23px;height:23px;border-radius:50%;border:2px solid var(--muted);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .clc.ck{background:var(--ok);border-color:var(--ok)}
@@ -79,14 +80,12 @@ textarea{resize:vertical;min-height:66px}
 .stab{flex:1;border:none;background:none;color:var(--muted);padding:7px 4px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;}
 .stab.on{background:var(--surf);color:var(--text)}
 .stab.facade-tab.on{color:var(--facade)}
-/* GCP */
 .gcpc{background:var(--surf);border-radius:var(--r);padding:16px;margin-bottom:10px}
 .epsg{font-size:24px;font-weight:900;color:var(--accent);margin-bottom:3px;letter-spacing:-.5px}
 .sysname{font-size:14px;font-weight:700;margin-bottom:8px}
 .sysd{font-size:12px;color:var(--muted);line-height:1.7}
 .emlid-box{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.18);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:13px;line-height:1.6;}
 .emlid-box strong{color:var(--accent)}
-/* FACADE REFERENCE */
 .fbox{background:var(--surf);border-radius:var(--r);padding:14px;margin-bottom:10px;border-left:3px solid var(--facade);}
 .fbox-title{font-size:13px;font-weight:800;color:var(--facade);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em}
 .fbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
@@ -94,16 +93,13 @@ textarea{resize:vertical;min-height:66px}
 .fbox-key{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
 .fbox-val{font-size:13px;font-weight:600}
 .fbox-val.ok{color:var(--ok)}
-.fbox-val.warn{color:var(--warn)}
 .fbox-val.danger{color:var(--danger)}
 .pass-box{background:var(--surf2);border-radius:9px;padding:12px;margin-bottom:8px}
-.pass-title{font-size:12px;font-weight:800;color:var(--facade);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
 .pass-row{display:flex;gap:6px;margin-bottom:5px;align-items:flex-start}
 .pass-dot{width:5px;height:5px;border-radius:50%;background:var(--facade);flex-shrink:0;margin-top:5px}
 .pass-text{font-size:12px;color:var(--muted);line-height:1.5}
 .pass-text b{color:var(--text)}
 .warn-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:var(--danger);line-height:1.6;}
-/* SITES */
 .si{background:var(--surf2);border-radius:9px;padding:12px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;}
 .sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px}
 .sd-pending{background:var(--muted)}
@@ -124,12 +120,30 @@ textarea{resize:vertical;min-height:66px}
 .div{height:1px;background:rgba(255,255,255,0.05);margin:14px 0}
 .info-box{background:var(--surf2);border-radius:9px;padding:14px;font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:10px;}
 .info-box b{color:var(--text)}
+/* MILEAGE */
+.mile-card{background:var(--surf);border-radius:var(--r);padding:13px 14px;margin-bottom:9px;border:1px solid rgba(255,255,255,0.04);display:flex;align-items:flex-start;gap:10px;}
+.mile-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px;background:var(--mile);}
+.mile-dot.synced{background:var(--ok)}
+.mile-dot.pending{background:var(--warn)}
+.mile-info{flex:1;min-width:0}
+.mile-loc{font-size:14px;font-weight:600}
+.mile-meta{font-size:12px;color:var(--muted);margin-top:3px}
+.mile-miles{font-size:20px;font-weight:800;color:var(--mile);flex-shrink:0;text-align:right}
+.mile-miles-unit{font-size:10px;color:var(--muted);text-align:right}
+.mile-actions{display:flex;gap:6px;margin-top:8px}
+.mile-summary{background:var(--surf);border-radius:var(--r);padding:14px;margin-bottom:12px;border:1px solid rgba(52,211,153,.15);}
+.mile-sum-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.mile-sum-label{font-size:12px;color:var(--muted)}
+.mile-sum-val{font-size:15px;font-weight:700;color:var(--mile)}
+.sync-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.25);border-radius:9px;padding:13px;color:var(--mile);font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px;font-family:inherit;transition:opacity .15s;}
+.sync-btn:active{opacity:.7}
+.sync-btn:disabled{opacity:.4;cursor:not-allowed}
 /* FLIGHT CALC */
 .fc-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
 .fc-row label{font-size:13px;color:var(--muted);min-width:120px;flex-shrink:0;}
 .fc-row input[type=range]{flex:1;accent-color:var(--accent);}
 .fc-row .fc-val{font-size:13px;font-weight:700;min-width:62px;text-align:right;color:var(--text);}
-.fc-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.fc-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
 .fc-card{background:var(--surf2);border-radius:9px;padding:10px 12px;}
 .fc-card-label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
 .fc-card-val{font-size:20px;font-weight:700;color:var(--text);}
@@ -143,6 +157,13 @@ textarea{resize:vertical;min-height:66px}
 .fc-ok{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:var(--ok);line-height:1.6;}
 .fc-section{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:10px 0 7px;}
 .fc-note{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:10px;}
+.gsd-card{background:var(--surf);border-radius:9px;padding:8px 12px;margin-bottom:10px;border:1px solid rgba(56,189,248,.15);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.gsd-left{display:flex;align-items:baseline;gap:7px;}
+.gsd-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.gsd-value{font-size:22px;font-weight:900;color:var(--accent);letter-spacing:-.5px;line-height:1;}
+.gsd-unit{font-size:11px;color:var(--muted);}
+.gsd-toggle-wrap{display:flex;flex-direction:row;align-items:center;gap:6px;flex-shrink:0;}
+.gsd-toggle-label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.04em;}
 </style>
 </head>
 <body>
@@ -156,31 +177,44 @@ textarea{resize:vertical;min-height:66px}
   <button class="nb on" id="nb-jobs" onclick="showTab('jobs')"><span class="nbi">📋</span>Jobs</button>
   <button class="nb" id="nb-check" onclick="showTab('check')"><span class="nbi">✅</span>Checklist</button>
   <button class="nb" id="nb-gcp" onclick="showTab('gcp')"><span class="nbi">📍</span>GCP</button>
-  <button class="nb" id="nb-calc" onclick="showTab('calc')"><span class="nbi">🛩️</span>Flight Calc</button>
+  <button class="nb" id="nb-calc" onclick="showTab('calc')"><span class="nbi">🛩️</span>Calc</button>
+  <button class="nb" id="nb-mile" onclick="showTab('mile')"><span class="nbi">🚗</span>Mileage</button>
   <button class="nb" id="nb-settings" onclick="showTab('settings')"><span class="nbi">⚙️</span>Settings</button>
 </div>
 <script>
-// ── DATA ──────────────────────────────────────────────
 const SK='fg_planner_v2';
 const DEF={
   jobs:[],
+  mileage:[],
+  sheetsUrl:'',
   cl:{
     pre:['Charge phone fully','Charge all drone batteries','Charge backup batteries','Pack rod + legs (survey rod)','Download site files / KML','Check weather forecast','Check airspace / NOTAMs','Confirm Flyguys job details','Pack ground control targets'],
     post:['All batteries accounted for','Drone secured in case','Survey rod + legs packed','Raw data backed up','Files uploaded per job req','Flight time logged','Report submitted in app'],
-    facade:['Confirm Building KML loaded in DJI Pilot 2','Verify RTK fix before takeoff','✅ CHECK: Dewarping ON (resets between flights!)','Set Image Ratio: 4:3','Set Image Format: JPG','Night Scene: OFF','Electronic Dehazing: OFF','White Balance: OFF','Mechanical Shutter: ON','Focus: AFC','Complete Pass 1 — 0° gimbal, close/low','Re-verify Dewarping ON before Pass 2','Complete Pass 2 — −20° to −30° gimbal, 40ft further','Check coverage in QGIS before leaving site','Copy images to external hard drive (do not move)','Upload to FlyGuys portal within 12 hrs','Click "Complete Upload" in portal']
+    facade:['Confirm Building KML loaded in DJI Pilot 2','Verify RTK fix before takeoff','✅ CHECK: Dewarping ON (resets between flights!)','Set Image Ratio: 4:3','Set Image Format: JPG','Night Scene: OFF','Electronic Dehazing: OFF','White Balance: AUTO','Mechanical Shutter: ON','Focus: AFC','Complete Pass 1 — 0° gimbal, close/low','Re-verify Dewarping ON before Pass 2','Complete Pass 2 — −20° to −30° gimbal, 40ft further','Check coverage in QGIS before leaving site','Copy images to external hard drive (do not move)','Upload to FlyGuys portal within 12 hrs','Click "Complete Upload" in portal']
   }
 };
 let D=load();
 let tab='jobs',view='list',jobId=null,clPhase='pre';
+let gsdInches=false;
 
-function load(){try{const s=JSON.parse(localStorage.getItem(SK));if(s){if(!s.cl.facade)s.cl.facade=JSON.parse(JSON.stringify(DEF.cl.facade));return s;}return JSON.parse(JSON.stringify(DEF));}catch{return JSON.parse(JSON.stringify(DEF));}}
+function load(){
+  try{
+    const s=JSON.parse(localStorage.getItem(SK));
+    if(s){
+      if(!s.cl.facade)s.cl.facade=JSON.parse(JSON.stringify(DEF.cl.facade));
+      if(!s.mileage)s.mileage=[];
+      if(s.sheetsUrl===undefined)s.sheetsUrl='';
+      return s;
+    }
+    return JSON.parse(JSON.stringify(DEF));
+  }catch{return JSON.parse(JSON.stringify(DEF));}
+}
 function save(){try{localStorage.setItem(SK,JSON.stringify(D));}catch(e){}}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function fmtDate(d){if(!d)return'';const[y,m,dy]=d.split('-');return new Date(y,m-1,dy).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 function isFacade(){const j=D.jobs.find(x=>x.id===jobId);return j?.facade||false;}
 
-// ── RENDER ────────────────────────────────────────────
 function render(){
   const m=document.getElementById('main');
   if(view==='job'&&jobId){renderJob(m);return;}
@@ -188,10 +222,11 @@ function render(){
   else if(tab==='check')renderCheck(m);
   else if(tab==='gcp')renderGCP(m);
   else if(tab==='calc')renderCalc(m);
+  else if(tab==='mile')renderMileage(m);
   else renderSettings(m);
 }
 
-// ── JOBS LIST ─────────────────────────────────────────
+// ── JOBS ──────────────────────────────────────────────
 function renderJobs(m){
   hdr('Jobs',false,true);
   if(!D.jobs.length){m.innerHTML=`<div class="empty"><div class="empty-i">🚁</div><div class="empty-t">No jobs yet.<br>Tap <b>+ New</b> to add your first job.</div></div>`;return;}
@@ -207,7 +242,6 @@ function renderJobs(m){
 }
 function openJob(id){jobId=id;view='job';if(clPhase==='facade'&&!isFacade())clPhase='pre';render();}
 
-// ── JOB DETAIL ────────────────────────────────────────
 function renderJob(m){
   const j=D.jobs.find(x=>x.id===jobId);
   if(!j){goBack();return;}
@@ -271,10 +305,8 @@ function renderJob(m){
   <div style="height:24px"></div>`;
 }
 
-// ── FACADE CONTENT ────────────────────────────────────
 function renderFacadeContent(){
-  const j=D.jobs.find(x=>x.id===jobId);
-  if(!j)return'';
+  const j=D.jobs.find(x=>x.id===jobId);if(!j)return'';
   const checks=j.checks||{};checks.facade=checks.facade||{};
   const items=D.cl.facade;
   const pairs=items.map((item,i)=>({item,i,ck:!!(checks.facade[i])}));
@@ -284,8 +316,7 @@ function renderFacadeContent(){
       <div class="clc ${ck?'ck-f':''}" onclick="togCl(${i})"></div>
       <div class="clt ${ck?'done':''}">${esc(item)}</div>
     </div>`).join('');
-  return`
-  ${checkHTML}
+  return`${checkHTML}
   <div class="div"></div>
   <div class="fbox">
     <div class="fbox-title">📷 Camera Settings</div>
@@ -328,8 +359,8 @@ function renderFacadeContent(){
     <div class="fbox-title">🚫 Image Quality Failures (refly required)</div>
     <div class="pass-box">
       <div class="pass-row"><div class="pass-dot" style="background:var(--danger)"></div><div class="pass-text"><b>Excessively angled</b> — too steep, not enough wall detail</div></div>
-      <div class="pass-row"><div class="pass-dot" style="background:var(--danger)"></div><div class="pass-text"><b>Too far from structure</b> — insufficient wall detail for assessment</div></div>
-      <div class="pass-row"><div class="pass-dot" style="background:var(--danger)"></div><div class="pass-text"><b>Missing roof line</b> — roof edge must be visible in frame</div></div>
+      <div class="pass-row"><div class="pass-dot" style="background:var(--danger)"></div><div class="pass-text"><b>Too far from structure</b> — insufficient wall detail</div></div>
+      <div class="pass-row"><div class="pass-dot" style="background:var(--danger)"></div><div class="pass-text"><b>Missing roof line</b> — roof edge must be visible</div></div>
       <div class="pass-row"><div class="pass-dot" style="background:var(--danger)"></div><div class="pass-text"><b>Vignetted corners</b> — Dewarping was OFF during capture</div></div>
     </div>
   </div>`;
@@ -366,9 +397,8 @@ function togCl(i){
   const items=D.cl[clPhase],checks=j.checks;
   const tot=items.length,done=items.filter((_,k)=>checks[clPhase]?.[k]).length;
   const prog=document.getElementById('prog');
-  if(prog){prog.style.width=(tot?Math.round(done/tot*100):0)+'%';}
-  const stabs=document.querySelectorAll('.stab');
-  stabs.forEach(t=>{
+  if(prog)prog.style.width=(tot?Math.round(done/tot*100):0)+'%';
+  document.querySelectorAll('.stab').forEach(t=>{
     if(clPhase==='pre'&&t.textContent.startsWith('Pre'))t.textContent=`Pre (${done}/${tot})`;
     if(clPhase==='post'&&t.textContent.startsWith('Post'))t.textContent=`Post (${done}/${tot})`;
     if(clPhase==='facade'&&t.classList.contains('facade-tab'))t.textContent=`Facade (${done}/${tot})`;
@@ -383,7 +413,7 @@ function setCLP(p){
     document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
     if(p==='pre')document.querySelectorAll('.stab')[0]?.classList.add('on');
     if(p==='post')document.querySelectorAll('.stab')[1]?.classList.add('on');
-    if(p==='facade'){document.querySelector('.facade-tab')?.classList.add('on');}
+    if(p==='facade')document.querySelector('.facade-tab')?.classList.add('on');
     const j=D.jobs.find(x=>x.id===jobId);
     if(j){
       const items=D.cl[p],checks=j.checks||{};
@@ -413,7 +443,6 @@ function renderCheck(m){
   <button class="btn bg" style="width:100%;margin-top:4px" onclick="addTmplItem()">+ Add Item</button>
   <div style="height:20px"></div>`;
 }
-
 function renderTemplate(){
   return D.cl[clPhase].map((item,i)=>`
   <div class="cli" id="tpl-${i}">
@@ -422,7 +451,6 @@ function renderTemplate(){
     <button class="cld" onclick="delTmpl(${i})">×</button>
   </div>`).join('');
 }
-
 function setClTab(p){clPhase=p;render();}
 function addTmplItem(){
   const label=clPhase==='pre'?'pre-flight':clPhase==='post'?'post-flight':'facade';
@@ -434,9 +462,7 @@ function delTmpl(i){confirm2(`Remove "${D.cl[clPhase][i]}"?`,()=>{D.cl[clPhase].
 let _drag=null;
 function startDrag(e,idx){
   e.preventDefault();
-  const handle=e.currentTarget;
-  const el=handle.closest('.cli');
-  const rect=el.getBoundingClientRect();
+  const handle=e.currentTarget,el=handle.closest('.cli'),rect=el.getBoundingClientRect();
   const clone=el.cloneNode(true);
   clone.style.cssText=`position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;z-index:999;pointer-events:none;background:var(--surf3);border-radius:9px;box-shadow:0 8px 32px rgba(0,0,0,.6);`;
   document.body.appendChild(clone);
@@ -488,7 +514,6 @@ const GCP={
   UTM:{label:'UTM Zone 19N (Universal)',sys:[{epsg:'EPSG:32619',name:'WGS84 / UTM Zone 19N',units:'Meters',emlid:'Search "UTM 19N" or type "32619" in Emlid Flow',note:'Covers all of New England. Best cross-state fallback.'}]}
 };
 let gcpState=localStorage.getItem('fg_gcp')||'NH';
-
 function renderGCP(m){
   hdr('GCP Coords',false,false);
   const sd=GCP[gcpState];
@@ -496,23 +521,16 @@ function renderGCP(m){
   <div class="fg"><div class="fl">State / Region</div>
     <select onchange="setGCP(this.value)">${Object.entries(GCP).map(([k,v])=>`<option value="${k}" ${k===gcpState?'selected':''}>${v.label}</option>`).join('')}</select>
   </div>
-  ${sd.sys.map(s=>`
-  <div class="gcpc">
-    <div class="epsg">${s.epsg}</div>
-    <div class="sysname">${s.name}</div>
+  ${sd.sys.map(s=>`<div class="gcpc">
+    <div class="epsg">${s.epsg}</div><div class="sysname">${s.name}</div>
     <div class="sysd">Units: <b style="color:var(--text)">${s.units}</b><br>${s.note}</div>
     <div class="emlid-box"><strong>Emlid Flow:</strong><br>${esc(s.emlid)}</div>
   </div>`).join('')}
   <div class="div"></div>
   <div class="gcpc">
     <div style="font-size:13px;font-weight:700;margin-bottom:8px">📐 Vertical / Ellipsoidal Height</div>
-    <div class="sysd">Flyguys uses <b style="color:var(--text)">GEOID12B</b> (<code style="font-size:11px;color:var(--accent)">us_noaa_g2012bu0.tif</code>) to convert GPS ellipsoidal height to NAVD88 orthometric elevation.<br><br><b style="color:var(--text)">In Emlid Flow:</b></div>
-    <div class="emlid-box" style="margin-top:8px">
-      <strong>Vertical datum:</strong> NAVD88<br>
-      <strong>Geoid model:</strong> GEOID12B (auto-selected for CONUS states)<br>
-      <strong>Height output:</strong> Orthometric (m or ftUS — match horizontal units)<br><br>
-      <strong>⚠️ Do not use ellipsoidal height in the export</strong> — use NAVD88 unless job calls for HAE.
-    </div>
+    <div class="sysd">Flyguys uses <b style="color:var(--text)">GEOID12B</b> (<code style="font-size:11px;color:var(--accent)">us_noaa_g2012bu0.tif</code>) to convert GPS ellipsoidal height to NAVD88.<br><br><b style="color:var(--text)">In Emlid Flow:</b></div>
+    <div class="emlid-box" style="margin-top:8px"><strong>Vertical datum:</strong> NAVD88<br><strong>Geoid model:</strong> GEOID12B<br><strong>Height output:</strong> Orthometric (match horizontal units)<br><br><strong>⚠️ Do not export ellipsoidal height</strong> — use NAVD88 unless job calls for HAE.</div>
   </div>
   <div class="div"></div>
   <div class="gcpc">
@@ -524,39 +542,30 @@ function renderGCP(m){
 function setGCP(s){gcpState=s;localStorage.setItem('fg_gcp',s);renderGCP(document.getElementById('main'));}
 
 // ── FLIGHT CALC TAB ───────────────────────────────────
-const M4E={sensorW_mm:17.3,sensorH_mm:13.0,focalLen_mm:12.29,battMin:38,shutterIntervalS:3.0};
+const M4E={sensorW_mm:17.3,sensorH_mm:13.0,focalLen_mm:12.29,imgW_px:5472,imgH_px:3648,battMin:38,shutterIntervalS:3.0};
 let FC={acres:6.23,altFt:200,frontOv:75,sideOv:65,speedMph:18};
-
 function renderCalc(m){
   hdr('Flight Calc',false,false);
   m.innerHTML=`
   <div class="fc-section">M4E Mission Parameters</div>
-  <div class="fc-row">
-    <label>Area (acres)</label>
-    <input type="range" min="1" max="50" step="0.5" value="${FC.acres}" oninput="fcUp('acres',+this.value)">
-    <span class="fc-val" id="fc-acres">${FC.acres}</span>
-  </div>
-  <div class="fc-row">
-    <label>Altitude AGL</label>
-    <input type="range" min="50" max="400" step="5" value="${FC.altFt}" oninput="fcUp('altFt',+this.value)">
-    <span class="fc-val" id="fc-alt">${FC.altFt} ft</span>
-  </div>
-  <div class="fc-row">
-    <label>Front overlap</label>
-    <input type="range" min="50" max="95" step="5" value="${FC.frontOv}" oninput="fcUp('frontOv',+this.value)">
-    <span class="fc-val" id="fc-front">${FC.frontOv}%</span>
-  </div>
-  <div class="fc-row">
-    <label>Side overlap</label>
-    <input type="range" min="50" max="95" step="5" value="${FC.sideOv}" oninput="fcUp('sideOv',+this.value)">
-    <span class="fc-val" id="fc-side">${FC.sideOv}%</span>
-  </div>
-  <div class="fc-row">
-    <label>Speed</label>
-    <input type="range" min="4" max="33" step="1" value="${FC.speedMph}" oninput="fcUp('speedMph',+this.value)">
-    <span class="fc-val" id="fc-speed">${FC.speedMph} mph</span>
-  </div>
+  <div class="fc-row"><label>Area (acres)</label><input type="range" min="1" max="50" step="0.5" value="${FC.acres}" oninput="fcUp('acres',+this.value)"><span class="fc-val" id="fc-acres">${FC.acres}</span></div>
+  <div class="fc-row"><label>Altitude AGL</label><input type="range" min="50" max="400" step="5" value="${FC.altFt}" oninput="fcUp('altFt',+this.value)"><span class="fc-val" id="fc-alt">${FC.altFt} ft</span></div>
+  <div class="fc-row"><label>Front overlap</label><input type="range" min="50" max="95" step="5" value="${FC.frontOv}" oninput="fcUp('frontOv',+this.value)"><span class="fc-val" id="fc-front">${FC.frontOv}%</span></div>
+  <div class="fc-row"><label>Side overlap</label><input type="range" min="50" max="95" step="5" value="${FC.sideOv}" oninput="fcUp('sideOv',+this.value)"><span class="fc-val" id="fc-side">${FC.sideOv}%</span></div>
+  <div class="fc-row"><label>Speed</label><input type="range" min="4" max="33" step="1" value="${FC.speedMph}" oninput="fcUp('speedMph',+this.value)"><span class="fc-val" id="fc-speed">${FC.speedMph} mph</span></div>
   <div id="fc-shutter-status"></div>
+  <div class="gsd-card" style="margin-top:2px">
+    <div class="gsd-left">
+      <div class="gsd-label">GSD</div>
+      <div class="gsd-value" id="gsd-value">—</div>
+      <div class="gsd-unit" id="gsd-unit">cm/px</div>
+    </div>
+    <div class="gsd-toggle-wrap">
+      <div class="gsd-toggle-label" id="gsd-tog-label" style="color:${gsdInches?'var(--muted)':'var(--accent)'}">cm</div>
+      <button class="tog acc ${gsdInches?'on':''}" onclick="togGSD()"></button>
+      <div class="gsd-toggle-label" style="color:${gsdInches?'var(--accent)':'var(--muted)'}">in</div>
+    </div>
+  </div>
   <div class="div"></div>
   <div class="fc-section">Results</div>
   <div class="fc-result">
@@ -565,11 +574,16 @@ function renderCalc(m){
     <div class="fc-meta" id="fc-meta"></div>
   </div>
   <div class="fc-cards" id="fc-cards"></div>
-  <div class="fc-note">Assumes calm wind · no obstacles · standard transit/turnaround<br>M4E battery = ~38 min max · add 15–20% buffer for wind/RTH reserve</div>
+  <div class="fc-note">Assumes calm wind · no obstacles · standard transit/turnaround<br>M4E battery = ~38 min max · add 15–20% buffer for wind/RTH reserve<br>GSD based on M4E wide camera (20MP · 12.29mm · 17.3mm sensor)</div>
   <div style="height:20px"></div>`;
   fcCalc();
 }
-
+function togGSD(){
+  gsdInches=!gsdInches;
+  const btn=document.querySelector('.tog.acc');
+  if(btn)btn.classList.toggle('on',gsdInches);
+  fcCalc();
+}
 function fcUp(key,val){
   FC[key]=val;
   document.getElementById('fc-acres').textContent=FC.acres;
@@ -579,56 +593,155 @@ function fcUp(key,val){
   document.getElementById('fc-speed').textContent=FC.speedMph+' mph';
   fcCalc();
 }
-
 function fcCalc(){
-  const altM=FC.altFt*0.3048;
-  const areaM2=FC.acres*4046.86;
-  const speedMs=FC.speedMph*0.44704;
-  const fwM=(M4E.sensorW_mm/M4E.focalLen_mm)*altM;
-  const fhM=(M4E.sensorH_mm/M4E.focalLen_mm)*altM;
-  const targetTrigM=fhM*(1-FC.frontOv/100);
-  const lineSpacingM=fwM*(1-FC.sideOv/100);
-  const shutterTrigM=speedMs*M4E.shutterIntervalS;
-  const actualTrigM=Math.max(targetTrigM,shutterTrigM);
-  const actualFrontOv=Math.round((1-(actualTrigM/fhM))*100);
-  const isLimited=shutterTrigM>targetTrigM;
+  const altM=FC.altFt*0.3048,areaM2=FC.acres*4046.86,speedMs=FC.speedMph*0.44704;
+  const fwM=(M4E.sensorW_mm/M4E.focalLen_mm)*altM,fhM=(M4E.sensorH_mm/M4E.focalLen_mm)*altM;
+  const gsdCm=(M4E.sensorW_mm/M4E.focalLen_mm)*(altM/M4E.imgW_px)*100;
+  const gsdIn=gsdCm*0.393701;
+  const gv=document.getElementById('gsd-value'),gu=document.getElementById('gsd-unit');
+  if(gv)gv.textContent=gsdInches?gsdIn.toFixed(3):gsdCm.toFixed(2);
+  if(gu)gu.textContent=gsdInches?'in / px':'cm / px';
+  const targetTrigM=fhM*(1-FC.frontOv/100),lineSpacingM=fwM*(1-FC.sideOv/100);
+  const shutterTrigM=speedMs*M4E.shutterIntervalS,actualTrigM=Math.max(targetTrigM,shutterTrigM);
+  const actualFrontOv=Math.round((1-(actualTrigM/fhM))*100),isLimited=shutterTrigM>targetTrigM;
   const maxSpeedMph=(targetTrigM/M4E.shutterIntervalS/0.44704).toFixed(1);
-  const areaSqrt=Math.sqrt(areaM2);
-  const numLines=Math.ceil(areaSqrt/lineSpacingM)+1;
-  const totalLineM=numLines*areaSqrt;
-  const totalS=(totalLineM/speedMs)+(numLines*3);
-  const totalMin=totalS/60;
-  const imagesPerLine=Math.ceil(areaSqrt/actualTrigM)+1;
-  const totalImages=numLines*imagesPerLine;
-  const batts=Math.ceil(totalMin/(M4E.battMin*0.85));
-  const mins=Math.floor(totalMin);
-  const secs=Math.round((totalMin-mins)*60);
-
-  // shutter status
+  const areaSqrt=Math.sqrt(areaM2),numLines=Math.ceil(areaSqrt/lineSpacingM)+1;
+  const totalLineM=numLines*areaSqrt,totalS=(totalLineM/speedMs)+(numLines*3),totalMin=totalS/60;
+  const imagesPerLine=Math.ceil(areaSqrt/actualTrigM)+1,totalImages=numLines*imagesPerLine;
+  const batts=Math.ceil(totalMin/(M4E.battMin*0.85)),mins=Math.floor(totalMin),secs=Math.round((totalMin-mins)*60);
   const ss=document.getElementById('fc-shutter-status');
-  if(ss){
-    if(isLimited){
-      ss.innerHTML=`<div class="fc-warn" style="display:block">⚠️ Shutter-limited at ${FC.speedMph} mph — actual front overlap ~${actualFrontOv}%, not ${FC.frontOv}%. Max speed for ${FC.frontOv}% front overlap: ${maxSpeedMph} mph.</div>`;
-    } else {
-      ss.innerHTML=`<div class="fc-ok">✓ Speed OK — shutter keeps up at ${FC.speedMph} mph. Max for ${FC.frontOv}% front overlap: ${maxSpeedMph} mph.</div>`;
-    }
-  }
-
-  const ft=document.getElementById('fc-time');
-  if(ft)ft.textContent=mins+'m '+secs+'s';
-
+  if(ss){ss.innerHTML=isLimited?`<div class="fc-warn" style="display:block">⚠️ Shutter-limited at ${FC.speedMph} mph — actual front overlap ~${actualFrontOv}%, not ${FC.frontOv}%. Max speed: ${maxSpeedMph} mph.</div>`:`<div class="fc-ok">✓ Speed OK — shutter keeps up at ${FC.speedMph} mph. Max for ${FC.frontOv}% front overlap: ${maxSpeedMph} mph.</div>`;}
+  const ft=document.getElementById('fc-time');if(ft)ft.textContent=mins+'m '+secs+'s';
   const meta=document.getElementById('fc-meta');
   if(meta)meta.innerHTML=`<b>${batts}</b> ${batts===1?'battery':'batteries'} · <b>${totalImages.toLocaleString()}</b> images · footprint ${fwM.toFixed(0)}m × ${fhM.toFixed(0)}m${isLimited?' · <span style="color:var(--warn)">actual overlap '+actualFrontOv+'%</span>':''}`;
-
   const cards=document.getElementById('fc-cards');
-  if(cards){
-    const data=[
-      {label:'Flight Lines',val:numLines,unit:'lines'},
-      {label:'Total Distance',val:(totalLineM/1000).toFixed(2),unit:'km'},
-      {label:'Line Spacing',val:lineSpacingM.toFixed(1),unit:'m'},
-      {label:'Trigger Interval',val:actualTrigM.toFixed(1),unit:'m actual'},
-    ];
-    cards.innerHTML=data.map(c=>`<div class="fc-card"><div class="fc-card-label">${c.label}</div><div class="fc-card-val">${c.val}</div><div class="fc-card-unit">${c.unit}</div></div>`).join('');
+  if(cards){cards.innerHTML=[{label:'Flight Lines',val:numLines,unit:'lines'},{label:'Total Distance',val:(totalLineM/1000).toFixed(2),unit:'km'},{label:'Line Spacing',val:lineSpacingM.toFixed(1),unit:'m'},{label:'Trigger Interval',val:actualTrigM.toFixed(1),unit:'m actual'}].map(c=>`<div class="fc-card"><div class="fc-card-label">${c.label}</div><div class="fc-card-val">${c.val}</div><div class="fc-card-unit">${c.unit}</div></div>`).join('');}
+}
+
+// ── MILEAGE TAB ───────────────────────────────────────
+const RATE=0.70;
+function renderMileage(m){
+  hdr('Mileage',false,true);
+  const entries=[...D.mileage].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const pending=entries.filter(e=>!e.synced);
+  const totalMiles=entries.reduce((s,e)=>s+Number(e.miles||0),0);
+  const totalAmt=(totalMiles*RATE).toFixed(2);
+  const pendingMiles=pending.reduce((s,e)=>s+Number(e.miles||0),0);
+  const hasUrl=!!D.sheetsUrl;
+
+  m.innerHTML=`
+  <div class="mile-summary">
+    <div class="mile-sum-row"><span class="mile-sum-label">Total miles (all time)</span><span class="mile-sum-val">${totalMiles.toFixed(1)} mi</span></div>
+    <div class="mile-sum-row"><span class="mile-sum-label">Total reimbursement</span><span class="mile-sum-val">$${totalAmt}</span></div>
+    <div class="mile-sum-row"><span class="mile-sum-label">Pending sync</span><span class="mile-sum-val" style="color:${pending.length?'var(--warn)':'var(--muted)'}">${pending.length} entr${pending.length===1?'y':'ies'} · ${pendingMiles.toFixed(1)} mi</span></div>
+  </div>
+  ${!hasUrl?`<div class="info-box" style="border:1px solid rgba(245,158,11,.2)">⚠️ <b>No Sheets URL set.</b> Add your Google Apps Script URL in Settings to enable syncing.</div>`:''}
+  <button class="sync-btn" onclick="syncToSheets()" ${!hasUrl||!pending.length?'disabled':''}>
+    📤 Sync ${pending.length} Pending ${pending.length===1?'Entry':'Entries'} to Google Sheets
+  </button>
+  ${!entries.length?`<div class="empty" style="padding:40px 20px"><div class="empty-i">🚗</div><div class="empty-t">No mileage logged yet.<br>Tap <b>+ New</b> to add an entry.</div></div>`:''}
+  ${entries.map(e=>`
+  <div class="mile-card">
+    <div class="mile-dot ${e.synced?'synced':'pending'}"></div>
+    <div class="mile-info">
+      <div class="mile-loc">${esc(e.location)}</div>
+      <div class="mile-meta">${fmtDate(e.date)}${e.notes?' · '+esc(e.notes):''}</div>
+      <div class="mile-meta" style="color:var(--accent);margin-top:2px">$${(Number(e.miles||0)*RATE).toFixed(2)} · ${e.synced?'<span style="color:var(--ok)">✓ synced</span>':'<span style="color:var(--warn)">pending sync</span>'}</div>
+      <div class="mile-actions">
+        <button class="btn bg" style="padding:5px 10px;font-size:12px" onclick="editMileSheet('${e.id}')">Edit</button>
+        <button class="btn bd" style="padding:5px 10px;font-size:12px" onclick="delMile('${e.id}')">Delete</button>
+      </div>
+    </div>
+    <div>
+      <div class="mile-miles">${Number(e.miles||0).toFixed(1)}</div>
+      <div class="mile-miles-unit">miles</div>
+    </div>
+  </div>`).join('')}
+  <div style="height:20px"></div>`;
+}
+
+function addMileSheet(){
+  const today=new Date().toISOString().split('T')[0];
+  sheet(`<div class="sh-handle"></div>
+  <div class="sh-title">Log Mileage</div>
+  <div class="fg"><div class="fl">Date</div><input type="date" id="nm-date" value="${today}"></div>
+  <div class="fg"><div class="fl">Location / Description</div><input type="text" id="nm-loc" placeholder="e.g. Flyguys (Concord)"></div>
+  <div class="fg"><div class="fl">Miles (round trip)</div><input type="number" id="nm-miles" placeholder="0.0" step="0.1" min="0" style="font-size:20px;font-weight:700"></div>
+  <div class="fg"><div class="fl">Notes</div><input type="text" id="nm-notes" placeholder="Optional"></div>
+  <div style="font-size:12px;color:var(--muted);margin-bottom:14px;text-align:center" id="nm-preview"></div>
+  <div class="br">
+    <button class="btn bg" style="flex:1" onclick="closeSheet()">Cancel</button>
+    <button class="btn bp" style="flex:1" onclick="saveMile()">Save</button>
+  </div>`);
+  setTimeout(()=>{
+    document.getElementById('nm-loc')?.focus();
+    document.getElementById('nm-miles')?.addEventListener('input',e=>{
+      const v=parseFloat(e.target.value)||0;
+      const p=document.getElementById('nm-preview');
+      if(p)p.textContent=v?`$${(v*RATE).toFixed(2)} reimbursement`:'';
+    });
+  },120);
+}
+
+function editMileSheet(id){
+  const e=D.mileage.find(x=>x.id===id);if(!e)return;
+  sheet(`<div class="sh-handle"></div>
+  <div class="sh-title">Edit Mileage</div>
+  <div class="fg"><div class="fl">Date</div><input type="date" id="nm-date" value="${e.date}"></div>
+  <div class="fg"><div class="fl">Location / Description</div><input type="text" id="nm-loc" value="${esc(e.location)}"></div>
+  <div class="fg"><div class="fl">Miles (round trip)</div><input type="number" id="nm-miles" value="${e.miles}" step="0.1" min="0" style="font-size:20px;font-weight:700"></div>
+  <div class="fg"><div class="fl">Notes</div><input type="text" id="nm-notes" value="${esc(e.notes||'')}"></div>
+  <div class="br">
+    <button class="btn bg" style="flex:1" onclick="closeSheet()">Cancel</button>
+    <button class="btn bp" style="flex:1" onclick="saveMile('${id}')">Update</button>
+  </div>`);
+}
+
+function saveMile(editId){
+  const date=document.getElementById('nm-date').value;
+  const location=document.getElementById('nm-loc').value.trim();
+  const miles=parseFloat(document.getElementById('nm-miles').value)||0;
+  const notes=document.getElementById('nm-notes').value.trim();
+  if(!location||!miles){closeSheet();return;}
+  if(editId){
+    const e=D.mileage.find(x=>x.id===editId);
+    if(e){Object.assign(e,{date,location,miles,notes,synced:false});save();}
+  } else {
+    D.mileage.push({id:uid(),date,location,miles,notes,synced:false});save();
+  }
+  closeSheet();render();
+}
+
+function delMile(id){
+  confirm2('Delete this mileage entry?',()=>{
+    D.mileage=D.mileage.filter(e=>e.id!==id);save();render();
+  });
+}
+
+async function syncToSheets(){
+  if(!D.sheetsUrl){alert2('No Sheets URL set. Add it in Settings.');return;}
+  const pending=D.mileage.filter(e=>!e.synced);
+  if(!pending.length)return;
+  const btn=document.querySelector('.sync-btn');
+  if(btn){btn.disabled=true;btn.textContent='Syncing...';}
+  let ok=0,fail=0;
+  for(const e of pending){
+    try{
+      await fetch(D.sheetsUrl,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({date:e.date,location:e.location,miles:e.miles,amount:(e.miles*RATE).toFixed(2),notes:e.notes||''}),
+        mode:'no-cors'
+      });
+      e.synced=true;ok++;
+    }catch{fail++;}
+  }
+  save();
+  render();
+  if(fail===0){
+    // show brief success — no-cors means we can't confirm but assume success
+    const btn2=document.querySelector('.sync-btn');
+    if(btn2){btn2.textContent=`✓ ${ok} ${ok===1?'entry':'entries'} synced`;setTimeout(()=>render(),1500);}
   }
 }
 
@@ -636,9 +749,15 @@ function fcCalc(){
 function renderSettings(m){
   hdr('Settings',false,false);
   m.innerHTML=`
-  <div class="info-box" style="margin-bottom:14px"><b>Flyguys Field Planner v1.2</b><br><span style="font-size:12px">Host on GitHub Pages, Netlify, or Cloudflare Pages.</span></div>
+  <div class="info-box" style="margin-bottom:14px"><b>Flyguys Field Planner v1.3</b></div>
+  <div class="fg">
+    <div class="fl">Google Sheets Script URL</div>
+    <input type="url" placeholder="https://script.google.com/macros/s/..." value="${esc(D.sheetsUrl||'')}" onchange="upSheetsUrl(this.value)">
+    <div style="font-size:11px;color:var(--muted);margin-top:6px">Paste your deployed Apps Script web app URL here to enable mileage syncing.</div>
+  </div>
+  <div class="div"></div>
   <button class="reload-btn" onclick="forceReload()">🔄 Reload from Web</button>
-  <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:16px">Clears service worker cache and force-reloads. Use after pushing updates to your repo.</div>
+  <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:16px">Clears service worker cache and force-reloads.</div>
   <div class="div"></div>
   <div class="fg"><div class="fl">Backup</div><button class="btn bg" style="width:100%" onclick="exportData()">📤 Export JSON Backup</button></div>
   <div class="fg"><div class="fl">Danger Zone</div><button class="btn bd" style="width:100%" onclick="clearAll()">🗑 Clear All Data</button></div>
@@ -649,12 +768,14 @@ function renderSettings(m){
   </div>
   <div style="height:20px"></div>`;
 }
+function upSheetsUrl(v){D.sheetsUrl=v.trim();save();}
 
 // ── ACTIONS ───────────────────────────────────────────
 function handleAdd(){
   if(view==='job'){addSiteSheet();return;}
   if(tab==='jobs')addJobSheet();
   else if(tab==='check')addTmplItem();
+  else if(tab==='mile')addMileSheet();
 }
 function addJobSheet(){
   const today=new Date().toISOString().split('T')[0];
@@ -728,6 +849,13 @@ function confirm2(msg,onYes){
     <button class="btn bd" style="flex:1" onclick="closeSheet();_cb&&_cb()">Delete</button>
   </div>`);
 }
+function alert2(msg){
+  sheet(`<div class="sh-handle"></div>
+  <div class="sh-title" style="font-size:16px">${esc(msg)}</div>
+  <div class="br" style="margin-top:8px">
+    <button class="btn bp" style="flex:1" onclick="closeSheet()">OK</button>
+  </div>`);
+}
 function prompt2(msg,placeholder,onOk){
   _cb=onOk;
   sheet(`<div class="sh-handle"></div>
@@ -755,7 +883,7 @@ function exportData(){
 function clearAll(){
   confirm2('Clear ALL jobs and data? Cannot be undone.',()=>{D=JSON.parse(JSON.stringify(DEF));save();view='list';jobId=null;render();});
 }
-if('serviceWorker'in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});}
+if('serviceWorker'in navigator){navigator.serviceWorker.register('/Drone-Job-checklist/sw.js').catch(()=>{});}
 render();
 </script>
 </body>
