@@ -1,4 +1,4 @@
-const CACHE = 'fg-v3';
+const CACHE = 'fg-v4';
 const FILES_TO_CACHE = [
   '/Drone-Job-checklist/',
   '/Drone-Job-checklist/index.html',

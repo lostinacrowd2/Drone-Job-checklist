@@ -729,9 +729,10 @@ async function syncToSheets(){
     try{
       await fetch(D.sheetsUrl,{
         method:'POST',
-        headers:{'Content-Type':'application/json'},
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
         body:JSON.stringify({date:e.date,location:e.location,miles:e.miles,amount:(e.miles*RATE).toFixed(2),notes:e.notes||''}),
-        mode:'no-cors'
+        mode:'no-cors',
+        redirect:'follow'
       });
       e.synced=true;ok++;
     }catch{fail++;}
